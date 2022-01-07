@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31829.152
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerArms", "PowerArms\PowerArms.csproj", "{3AE677D8-CAA6-4803-A8BA-AAD5C29263C8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AE677D8-CAA6-4803-A8BA-AAD5C29263C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AE677D8-CAA6-4803-A8BA-AAD5C29263C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AE677D8-CAA6-4803-A8BA-AAD5C29263C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AE677D8-CAA6-4803-A8BA-AAD5C29263C8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E1C3AE8A-1D1E-4D86-962C-7961F489A4AC}
+	EndGlobalSection
+EndGlobal

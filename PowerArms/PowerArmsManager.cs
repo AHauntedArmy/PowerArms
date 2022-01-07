@@ -57,13 +57,13 @@ namespace PowerArms
             Vector3 lookAssist = Camera.main.transform.forward * 0.2f;
 
             if (rightHandSpeed > 0f) {
-                Debug.Log("PowerArms: Right hand speed = " + rightHandSpeed);
+                // Debug.Log("PowerArms: Right hand speed = " + rightHandSpeed);
                 playerRigidBody.velocity += (rightHand.Direction + lookAssist).normalized * rightHandSpeed;
             }
 
 
             if (leftHandSpeed > 0f) {
-                Debug.Log("PowerArms: Left hand speed = " + leftHandSpeed);
+                // Debug.Log("PowerArms: Left hand speed = " + leftHandSpeed);
                 playerRigidBody.velocity += (leftHand.Direction + lookAssist).normalized * leftHandSpeed;
             }
 

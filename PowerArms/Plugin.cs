@@ -36,8 +36,8 @@ namespace PowerArms
         [ModdedGamemodeJoin]
         private void Load(string gamemode)
         {
-            Debug.Log("spawning PowerArmsManager");
-            Debug.Log("PowerArms: mod enabled = " + modEnabled);
+            // Debug.Log("spawning PowerArmsManager");
+            // Debug.Log("PowerArms: mod enabled = " + modEnabled);
             modInstance = gameObject.AddComponent<PowerArmsManager>();
             modInstance.enabled = modEnabled;
         }

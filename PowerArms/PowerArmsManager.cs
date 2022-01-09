@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using UnityEngine.XR;
 using GorillaLocomotion;
 
 using PowerArms.Hands;
@@ -13,7 +14,10 @@ namespace PowerArms
         private LeftHandTracker leftHand = null;
         private RightHandTracker rightHand = null;
 
-        private float acceleration = 3f;
+        private const float defaultAcceleration = 2.5f;
+        private const float defaultMaxSpeed = 6.7f;
+
+        private float acceleration = 2.5f;
         private float maxSpeed = 6.7f;
 
         private void Start()
@@ -41,6 +45,13 @@ namespace PowerArms
 
             if (rightHand != null)
                 rightHand.enabled = false;
+
+            if (playerRigidBody != null)
+                playerRigidBody.useGravity = true;
+
+            acceleration = defaultAcceleration;
+            maxSpeed = defaultMaxSpeed;
+           
         }
 
         private void OnDestroy()
@@ -51,24 +62,43 @@ namespace PowerArms
 
         private void Update()
         {
+            Swim();
+            Gravity();
+        }
+
+        private void Swim()
+        {
             float rightHandSpeed = acceleration * (rightHand.Speed * 0.01f);
             float leftHandSpeed = acceleration * (leftHand.Speed * 0.01f);
 
             Vector3 lookAssist = Camera.main.transform.forward * 0.2f;
 
-            if (rightHandSpeed > 0f) {
+            if (rightHandSpeed > 0f || leftHandSpeed > 0f) {
                 // Debug.Log("PowerArms: Right hand speed = " + rightHandSpeed);
-                playerRigidBody.velocity += (rightHand.Direction + lookAssist).normalized * rightHandSpeed;
-            }
-
-
-            if (leftHandSpeed > 0f) {
                 // Debug.Log("PowerArms: Left hand speed = " + leftHandSpeed);
+                playerRigidBody.velocity += (rightHand.Direction + lookAssist).normalized * rightHandSpeed;
                 playerRigidBody.velocity += (leftHand.Direction + lookAssist).normalized * leftHandSpeed;
-            }
 
-            if (playerRigidBody.velocity.magnitude > maxSpeed)
-                playerRigidBody.velocity = playerRigidBody.velocity.normalized * maxSpeed;
+                if (playerRigidBody.velocity.magnitude > maxSpeed)
+                    playerRigidBody.velocity = playerRigidBody.velocity.normalized * maxSpeed;
+            }
+        }
+
+        private void Gravity()
+        {
+            if (rightHand.PrimaryButton.wasPressed || leftHand.PrimaryButton.wasPressed) {
+                playerRigidBody.useGravity = !playerRigidBody.useGravity;
+
+                if (!playerRigidBody.useGravity) {
+                    acceleration *= 0.5f;
+                    maxSpeed *= 0.5f;
+                
+                } else {
+                    acceleration = defaultAcceleration;
+                    maxSpeed = defaultMaxSpeed;
+                }
+
+            }
         }
     }
 }

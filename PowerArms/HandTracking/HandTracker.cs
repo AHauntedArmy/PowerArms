@@ -3,6 +3,13 @@ using UnityEngine.XR;
 
 namespace PowerArms.Hands
 {
+    public struct InputState
+    {
+        public bool isActive;
+        public bool wasPressed;
+        public bool wasReleased;
+    }
+
     public abstract class HandTracker : MonoBehaviour
     {
         private float speed = 0f;
@@ -14,10 +21,9 @@ namespace PowerArms.Hands
 
         private AverageDirection smoothedDirection = AverageDirection.Zero;
 
-        private bool isActive;
-        private bool wasPressed;
-        private bool wasReleased;
         private InputDevice controller;
+        private InputState triggerButton;
+        private InputState primaryButton;
 
         protected abstract XRNode controllerNode { get; }
 
@@ -27,7 +33,7 @@ namespace PowerArms.Hands
 
         public Vector3 RawDirection { get { return rawDirection; } }
 
-        protected InputDevice inputDevice {
+        public InputDevice inputDevice {
             get {
                 if (!controller.isValid) {
                     return controller = InputDevices.GetDeviceAtXRNode(controllerNode);
@@ -36,6 +42,9 @@ namespace PowerArms.Hands
                 return controller;
             }
         }
+
+        public InputState TriggerButton { get => triggerButton; }
+        public InputState PrimaryButton { get => primaryButton; }
 
         public void Awake()
         {
@@ -63,10 +72,14 @@ namespace PowerArms.Hands
 
         private void Update()
         {
+            UpdateButtonState(CommonUsages.triggerButton, ref triggerButton);
+            UpdateButtonState(CommonUsages.primaryButton, ref primaryButton);
+
             // looking at isPRessed in dnspy, it returns false if no input or no device
             bool buttonState;
             inputDevice.TryGetFeatureValue(CommonUsages.triggerButton, out buttonState);
 
+            /**
             if (buttonState) {
                 if (!isActive) {
                     // Debug.Log("InputController: button was pressed");
@@ -89,6 +102,7 @@ namespace PowerArms.Hands
             }
 
             isActive = buttonState;
+            */
 
         }
 
@@ -102,7 +116,7 @@ namespace PowerArms.Hands
 
             // Debug.Log(string.Format("SwimHandTracker: \nwasPressed: {0} \nisActive: {1}, wasReleased: {2}", inputState.wasPressed, inputState.isActive, inputState.wasReleased));
 
-            if (wasPressed) {
+            if (triggerButton.wasPressed) {
                 // Debug.Log("SwimHandTracker: TriggerWasPressed");
                 speed = rawDirection.magnitude;
                 smoothedDirection += new AverageDirection(rawDirection, 0f);
@@ -110,7 +124,7 @@ namespace PowerArms.Hands
 
                 // Debug.Log("SwimHandTracker: Speed: " + speed);
 
-            } else if (isActive) {
+            } else if (triggerButton.isActive) {
                 // Debug.Log("SwimHandTracker: TriggerIsHeld");
                 speed = rawDirection.magnitude;
                 smoothedDirection += new AverageDirection(rawDirection * 0.5f, 0f);
@@ -118,7 +132,7 @@ namespace PowerArms.Hands
 
                 // Debug.Log("SwimHandTracker: Speed: " + speed);
 
-            } else if (wasReleased) {
+            } else if (triggerButton.wasReleased) {
                 // Debug.Log("TriggerWasReleased");
                 speed = 0f;
                 smoothedDirection = AverageDirection.Zero;
@@ -127,5 +141,34 @@ namespace PowerArms.Hands
                 
         }
 
+        private void UpdateButtonState(InputFeatureUsage<bool> button, ref InputState buttonState)
+        {
+            // looking at isPRessed in dnspy, it returns false if no input or no device
+            bool input = false;
+            inputDevice.TryGetFeatureValue(button, out input);
+
+            if (input) {
+                if (!buttonState.isActive) {
+                    // Debug.Log("InputController: button was pressed");
+                    buttonState.wasPressed = true;
+
+                } else {
+                    // Debug.Log("InputController: button is held");
+                    buttonState.wasPressed = false;
+                }
+
+            } else {
+                if (buttonState.isActive) {
+                    buttonState.wasReleased = true;
+                    buttonState.wasPressed = false;
+
+                } else {
+                    buttonState.wasReleased = false;
+                    buttonState.wasPressed = false;
+                }
+            }
+
+            buttonState.isActive = input;
+        }
     }
 }

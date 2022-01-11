@@ -27,7 +27,7 @@ namespace PowerArms.Hands
 
         protected abstract XRNode controllerNode { get; }
 
-        public float Speed { get { return (speed > 0f ? speed / Time.deltaTime : 0f); } }
+        public float Speed { get { return speed; } }
 
         public Vector3 Direction { get { return direction; } }
 
@@ -119,6 +119,7 @@ namespace PowerArms.Hands
             if (triggerButton.wasPressed) {
                 // Debug.Log("SwimHandTracker: TriggerWasPressed");
                 speed = rawDirection.magnitude;
+                speed = speed > 0f ? speed / Time.deltaTime : 0f;
                 smoothedDirection += new AverageDirection(rawDirection, 0f);
                 direction = rawDirection.normalized;
 
@@ -127,6 +128,7 @@ namespace PowerArms.Hands
             } else if (triggerButton.isActive) {
                 // Debug.Log("SwimHandTracker: TriggerIsHeld");
                 speed = rawDirection.magnitude;
+                speed = speed > 0f ? speed / Time.deltaTime : 0f;
                 smoothedDirection += new AverageDirection(rawDirection * 0.5f, 0f);
                 direction = smoothedDirection.Vector.normalized;
 

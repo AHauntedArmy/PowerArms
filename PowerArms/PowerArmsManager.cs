@@ -16,9 +16,9 @@ namespace PowerArms
 
         private const float defaultAcceleration = 2.5f;
         private const float defaultMaxSpeed = 6.7f;
-
         private float acceleration = 2.5f;
         private float maxSpeed = 6.7f;
+        private Vector3 AccelVector = Vector3.zero;
 
         private void Start()
         {
@@ -60,6 +60,13 @@ namespace PowerArms
             GameObject.Destroy(rightHand);
         }
 
+        // avoid framerate dependent movement
+        private void FixedUpdate()
+        {
+            playerRigidBody.velocity += AccelVector;
+
+        }
+
         private void Update()
         {
             Swim();
@@ -71,16 +78,21 @@ namespace PowerArms
             float rightHandSpeed = acceleration * (rightHand.Speed * 0.01f);
             float leftHandSpeed = acceleration * (leftHand.Speed * 0.01f);
 
-            Vector3 lookAssist = Camera.main.transform.forward * 0.2f;
+            AccelVector = Vector3.zero;
 
             if (rightHandSpeed > 0f || leftHandSpeed > 0f) {
                 // Debug.Log("PowerArms: Right hand speed = " + rightHandSpeed);
                 // Debug.Log("PowerArms: Left hand speed = " + leftHandSpeed);
-                playerRigidBody.velocity += (rightHand.Direction + lookAssist).normalized * rightHandSpeed;
-                playerRigidBody.velocity += (leftHand.Direction + lookAssist).normalized * leftHandSpeed;
 
-                if (playerRigidBody.velocity.magnitude > maxSpeed)
-                    playerRigidBody.velocity = playerRigidBody.velocity.normalized * maxSpeed;
+                Vector3 lookAssist = Camera.main.transform.forward * 0.2f;
+                AccelVector += (rightHand.Direction + lookAssist).normalized * rightHandSpeed;
+                AccelVector += (leftHand.Direction + lookAssist).normalized * leftHandSpeed;
+
+                if (playerRigidBody.velocity.magnitude > maxSpeed || (playerRigidBody.velocity + AccelVector).magnitude > maxSpeed) {
+                    playerRigidBody.velocity = (playerRigidBody.velocity + AccelVector).normalized * maxSpeed;
+                    AccelVector = Vector3.zero;
+                }
+
             }
         }
 

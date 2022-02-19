@@ -1,5 +1,5 @@
 ﻿using BepInEx;
-using System;
+using System.ComponentModel;
 using UnityEngine;
 
 using Utilla;
@@ -9,6 +9,7 @@ namespace PowerArms
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     [BepInDependency("org.legoandmars.gorillatag.utilla", "1.5.0")]
     [ModdedGamemode]
+    [Description("HauntedModMenu")]
     public class PowerArmsPlugin : BaseUnityPlugin
     {
         private PowerArmsManager modInstance = null;
